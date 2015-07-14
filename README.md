@@ -8,7 +8,7 @@ The [Beta function](https://en.wikipedia.org/wiki/Beta_function), also called th
 
 <div class="equation" align="center" data-raw-text="
     \operatorname{Beta}(x,y) = \int_0^1t^{x-1}(1-t)^{y-1}\,\mathrm{d}t" data-equation="eq:beta_function">
-	<img src="" alt="Equation for the beta function.">
+	<img src="https://cdn.rawgit.com/compute-io/beta/dc1b91b2b17b768ee83b3c2f4a47f3f6d4c2f624/docs/img/eqn1.svg" alt="Equation for the beta function.">
 	<br>
 </div>
 
@@ -18,7 +18,7 @@ is related to the [Gamma function](https://en.wikipedia.org/wiki/Gamma_function)
 <div class="equation" align="center" data-raw-text="
 \operatorname{Beta}(x,y)=\dfrac{\Gamma(x)\,\Gamma(y)}{\Gamma(x+y)} \!
 " data-equation="eq:beta_function2">
-	<img src="" alt="Beta function expressed in terms of the Gamma function.">
+	<img src="https://cdn.rawgit.com/compute-io/beta/dc1b91b2b17b768ee83b3c2f4a47f3f6d4c2f624/docs/img/eqn2.svg" alt="Beta function expressed in terms of the Gamma function.">
 	<br>
 </div>
 
@@ -37,9 +37,9 @@ For use in the browser, use [browserify](https://github.com/substack/node-browse
 var beta = require( 'compute-beta' );
 ```
 
-#### beta( x[, options] )
+#### beta( x, y[, options] )
 
-Evaluates the [error function](http://en.wikipedia.org/wiki/Error_function) (element-wise). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).
+Evaluates the [Beta function](http://en.wikipedia.org/wiki/Beta_function) (element-wise). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).  `y` has to be either an `array` or `matrix` of equal dimensions as `x` or a single number. Correspondingly, the function returns either an `array` with the same length as the x `array`, a `matrix` with the same dimensions as the x `matrix` or a single number.
 
 ``` javascript
 var matrix = require( 'dstructs-matrix' ),
@@ -109,6 +109,40 @@ var out = beta( data, {
 });
 // returns [ -1, -0.8427, 0, 0.8427, 1 ]
 ```
+
+When evaluating the [Beta function](https://en.wikipedia.org/wiki/Beta_function) for values of two object `arrays`, provide an accessor `function` which accepts `3` arguments.
+
+``` javascript
+var data = [
+	['beep', 5],
+	['boop', 3],
+	['bip', 8],
+	['bap', 3],
+	['baz', 2]
+];
+
+var arr = [
+	{'x': 0},
+	{'x': 1},
+	{'x': 2},
+	{'x': 3},
+	{'x': 4}
+];
+
+function getValue( d, i, j ) {
+	if ( j === 0 ) {
+		return d[ 1 ];
+	}
+	return d.x;
+}
+
+var out = beta( data, arr, {
+	'accessor': getValue
+});
+// returns [ 1, 3, 64, 27, 16 ]
+```
+
+__Note__: `j` corresponds to the input `array` index, where `j=0` is the index for the first input `array` and `j=1` is the index for the second input `array`.
 
 To [deepset](https://github.com/kgryte/utils-deep-set) an object `array`, provide a key path and, optionally, a key path separator.
 
@@ -255,7 +289,22 @@ bool = ( mat === out );
 	// returns Int8Array( [0,0,0] );
 	```
 
+*	When calling the function with a numeric value as the first argument and a `matrix` or `array` as the second argument, only the `dtype` option is applicable.
 
+	``` javascript
+		// Valid:
+		var out = power( 2.1, [ 0, 1, 2 ], {
+			'dtype': 'int8'
+		});
+		// returns Int8Array( [1,2,4] )
+
+		// Not valid:
+		var out = add( 0.5, [ 0, 1, 2 ], {
+			'copy': false
+		});
+		// throws an error
+	```
+	
 ## Examples
 
 ``` javascript
