@@ -25,7 +25,12 @@
   "keywords": [
     "compute.io",
     "compute",
-    "computation"
+    "computation",
+    "math",
+    "mathematics",
+    "special functions",
+    "beta",
+    "gamma"
   ],
   "bugs": {
     "url": "https://github.com/compute-io/beta/issues"

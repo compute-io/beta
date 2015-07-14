@@ -4,6 +4,23 @@ beta
 
 > Evaluates the beta function.
 
+The [Beta function](https://en.wikipedia.org/wiki/Beta_function), also called the Euler integral, is defined as
+
+<div class="equation" align="center" data-raw-text="
+    \operatorname{Beta}(x,y) = \int_0^1t^{x-1}(1-t)^{y-1}\,\mathrm{d}t" data-equation="eq:beta_function">
+	<img src="" alt="Equation for the beta function.">
+	<br>
+</div>
+
+The
+is related to the [Gamma function](https://en.wikipedia.org/wiki/Gamma_function) via the following equation
+
+<div class="equation" align="center" data-raw-text="
+\operatorname{Beta}(x,y)=\dfrac{\Gamma(x)\,\Gamma(y)}{\Gamma(x+y)} \!
+" data-equation="eq:beta_function2">
+	<img src="" alt="Beta function expressed in terms of the Gamma function.">
+	<br>
+</div>
 
 ## Installation
 
@@ -22,7 +39,7 @@ var beta = require( 'compute-beta' );
 
 #### beta( x[, options] )
 
-Evaluates the [error function](http://en.wikipedia.org/wiki/Error_function) (element-wise). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix). 
+Evaluates the [error function](http://en.wikipedia.org/wiki/Error_function) (element-wise). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).
 
 ``` javascript
 var matrix = require( 'dstructs-matrix' ),
