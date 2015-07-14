@@ -12,8 +12,7 @@ The [Beta function](https://en.wikipedia.org/wiki/Beta_function), also called th
 	<br>
 </div>
 
-The
-is related to the [Gamma function](https://en.wikipedia.org/wiki/Gamma_function) via the following equation
+It is related to the [Gamma function](https://en.wikipedia.org/wiki/Gamma_function) via the following equation
 
 <div class="equation" align="center" data-raw-text="
 \operatorname{Beta}(x,y)=\dfrac{\Gamma(x)\,\Gamma(y)}{\Gamma(x+y)} \!
@@ -39,7 +38,7 @@ var beta = require( 'compute-beta' );
 
 #### beta( x, y[, options] )
 
-Evaluates the [Beta function](http://en.wikipedia.org/wiki/Beta_function) (element-wise). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).  `y` has to be either an `array` or `matrix` of equal dimensions as `x` or a single number. Correspondingly, the function returns either an `array` with the same length as the x `array`, a `matrix` with the same dimensions as the x `matrix` or a single number.
+Evaluates the [Beta function](http://en.wikipedia.org/wiki/Beta_function) (element-wise). `x` may be either a [`number`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), an [`array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), a [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays), or a [`matrix`](https://github.com/dstructs/matrix).  `y` has to be either an `array` or `matrix` of equal dimensions as `x` or a single number. Correspondingly, the function returns either an `array` with the same length as the input `array(s)`, a `matrix` with the same dimensions as the input `matrix/matrices` or a single number.
 
 ``` javascript
 var matrix = require( 'dstructs-matrix' ),
@@ -50,6 +49,19 @@ var matrix = require( 'dstructs-matrix' ),
 
 out = beta( -1 );
 // returns -0.8427
+
+
+out = beta( -1 );
+// returns -0.8427
+
+
+out = beta( -1 );
+// returns -0.8427
+
+
+out = beta( -1 );
+// returns -0.8427
+
 
 out = beta( [ -10, -1, 0, 1, 10 ] );
 // returns [ -1, -0.8427, 0, 0.8427, 1 ]
@@ -293,13 +305,13 @@ bool = ( mat === out );
 
 	``` javascript
 		// Valid:
-		var out = power( 2.1, [ 0, 1, 2 ], {
+		var out = beta( 2.1, [ 0, 1, 2 ], {
 			'dtype': 'int8'
 		});
 		// returns Int8Array( [1,2,4] )
 
 		// Not valid:
-		var out = add( 0.5, [ 0, 1, 2 ], {
+		var out = beta( 0.5, [ 0, 1, 2 ], {
 			'copy': false
 		});
 		// throws an error
