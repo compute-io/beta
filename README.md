@@ -7,7 +7,7 @@ beta
 The [Beta function](https://en.wikipedia.org/wiki/Beta_function), also called the Euler integral, is defined as
 
 <div class="equation" align="center" data-raw-text="
-    \operatorname{Beta}(x,y) = \int_0^1t^{x-1}(1-t)^{y-1}\,\mathrm{d}t" data-equation="eq:beta_function">
+	\operatorname{Beta}(x,y) = \int_0^1t^{x-1}(1-t)^{y-1}\,\mathrm{d}t" data-equation="eq:beta_function">
 	<img src="https://cdn.rawgit.com/compute-io/beta/dc1b91b2b17b768ee83b3c2f4a47f3f6d4c2f624/docs/img/eqn1.svg" alt="Equation for the beta function.">
 	<br>
 </div>
@@ -47,56 +47,45 @@ var matrix = require( 'dstructs-matrix' ),
 	out,
 	i;
 
-out = beta( -1 );
-// returns -0.8427
+out = beta( 1, 1 );
+// returns ~1
 
+out = beta( 0, 0 );
+// returns +Infinity
 
-out = beta( -1 );
-// returns -0.8427
+out = beta( -1, 1 );
+// returns NaN
 
-
-out = beta( -1 );
-// returns -0.8427
-
-
-out = beta( -1 );
-// returns -0.8427
-
-
-out = beta( [ -10, -1, 0, 1, 10 ] );
-// returns [ -1, -0.8427, 0, 0.8427, 1 ]
-
-data = [ 0, 1, 2 ];
-out = beta( data );
-// returns [ 0, ~0.8427007, ~0.9953222 ]
+out = beta( [ 5, 10, 15, 20, 25, 30 ], 0.2 );
+// returns [ ~3.382, ~2.920, ~2.685, ~2.532, ~2.419, ~2.331 ]
 
 data = new Int8Array( data );
 out = beta( data );
-// returns Float64Array( [ 0, ~0.8427007, ~0.9953222 ] )
+// returns Float64Array( [~3.382,~2.920,~2.685,~2.532,~2.419,~2.331] )
 
 data = new Float64Array( 6 );
 for ( i = 0; i < 6; i++ ) {
-	data[ i ] = i / 2;
+	data[ i ] = i * 5 + 5;
 }
 mat = matrix( data, [3,2], 'float64' );
 /*
-	[ 0  0.5
-	  1  1.5
-	  2  2.5 ]
+	[ 5   10
+	  15  20
+	  25  30 ]
 */
 
-out = beta( mat );
+out = beta( mat, 0.2 );
 /*
-	[  0    ~0.52
-	  ~0.84 ~0.97
-	  ~1    ~1    ]
+	[ ~3.382 ~2.920
+	  ~2.685 ~2.532
+	  ~2.419 ~2.331 ]
 */
 ```
 
 The function accepts the following `options`:
 
-* 	__accessor__: accessor `function` for accessing `array` values.
-* 	__dtype__: output [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) or [`matrix`](https://github.com/dstructs/matrix) data type. Default: `float64`.
+*	 __accessor__: accessor `function` for accessing `array` values.
+*	 __dtype__: output [`typed array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays) or [`matrix`](https://github.com/dstructs/matrix) data type. Default: `float64`.
 *	__copy__: `boolean` indicating if the `function` should return a new data structure. Default: `true`.
 *	__path__: [deepget](https://github.com/kgryte/utils-deep-get)/[deepset](https://github.com/kgryte/utils-deep-set) key path.
 *	__sep__: [deepget](https://github.com/kgryte/utils-deep-get)/[deepset](https://github.com/kgryte/utils-deep-set) key path separator. Default: `'.'`.
@@ -105,40 +94,40 @@ For non-numeric `arrays`, provide an accessor `function` for accessing `array` v
 
 ``` javascript
 var data = [
-	['beep', -10],
-	['boop', -1],
-	['bip', 0],
-	['bap', 1],
-	['baz', 10]
+	['beep', 5],
+	['boop', 10],
+	['bip', 15],
+	['bap', 20],
+	['baz', 25]
 ];
 
 function getValue( d, i ) {
 	return d[ 1 ];
 }
 
-var out = beta( data, {
+var out = beta( data, 0.2, {
 	'accessor': getValue
 });
-// returns [ -1, -0.8427, 0, 0.8427, 1 ]
+// returns [ ~3.382, ~2.920, ~2.685, ~2.532, ~2.419 ]
 ```
 
 When evaluating the [Beta function](https://en.wikipedia.org/wiki/Beta_function) for values of two object `arrays`, provide an accessor `function` which accepts `3` arguments.
 
 ``` javascript
 var data = [
-	['beep', 5],
-	['boop', 3],
-	['bip', 8],
-	['bap', 3],
-	['baz', 2]
+	['beep', 1],
+	['boop', 2],
+	['bip', 3],
+	['bap', 4],
+	['baz', 5]
 ];
 
-var arr = [
-	{'x': 0},
+var y = [
 	{'x': 1},
 	{'x': 2},
 	{'x': 3},
-	{'x': 4}
+	{'x': 4},
+	{'x': 5}
 ];
 
 function getValue( d, i, j ) {
@@ -148,10 +137,10 @@ function getValue( d, i, j ) {
 	return d.x;
 }
 
-var out = beta( data, arr, {
+var out = beta( data, y, {
 	'accessor': getValue
 });
-// returns [ 1, 3, 64, 27, 16 ]
+// returns [ ~1, ~0.167, ~0.033, ~0.007, ~0.002 ]
 ```
 
 __Note__: `j` corresponds to the input `array` index, where `j=0` is the index for the first input `array` and `j=1` is the index for the second input `array`.
@@ -160,24 +149,23 @@ To [deepset](https://github.com/kgryte/utils-deep-set) an object `array`, provid
 
 ``` javascript
 var data = [
-	{'x':[0,-10]},
-	{'x':[1,-1]},
-	{'x':[2,0]},
-	{'x':[3,1]},
-	{'x':[4,10]}
+	{'x':[0,5]},
+	{'x':[1,10]},
+	{'x':[2,15]},
+	{'x':[3,20]},
+	{'x':[4,25]}
 ];
 
-var out = beta( data, 'x|1', '|' );
+var out = beta( data, 0.2, 'x|1', '|' );
 /*
 	[
-		{'x':[0,-1]},
-		{'x':[1,-0.8427]},
-		{'x':[2,0]},
-		{'x':[3,0.8427]},
-		{'x':[4,1]}
+		{'x':[0,~3.382]},
+		{'x':[1,~2.920]},
+		{'x':[2,~2.685]},
+		{'x':[3,~2.532]},
+		{'x':[4,~2.419]}
 	]
 */
-
 var bool = ( data === out );
 // returns true
 ```
@@ -187,18 +175,18 @@ By default, when provided a [`typed array`](https://developer.mozilla.org/en-US/
 ``` javascript
 var data, out;
 
-data = new Int8Array( [0, 1, 2] );
+data = new Int8Array( [10,20,30] );
 
-out = beta( data, {
+out = beta( data, 0.01, {
 	'dtype': 'int32'
 });
-// returns Int32Array( [0,0,0] )
+// returns Int32Array( [97,96,96] )
 
 // Works for plain arrays, as well...
-out = beta( [0, 1, 2], {
+out = beta( [ 10, 20, 30 ], 0.01, {
 	'dtype': 'uint8'
 });
-// returns Uint8Array( [0,0,0] )
+// returns Uint8Array( [97,96,96] )
 ```
 
 By default, the function returns a new data structure. To mutate the input data structure (e.g., when input values can be discarded or when optimizing memory usage), set the `copy` option to `false`.
@@ -210,34 +198,34 @@ var data,
 	out,
 	i;
 
-var data = [ -10, -1, 0, 1, 10 ];
+var data = [ 5, 10, 15, 20, 25, 30 ];
 
-var out = beta( data, {
+var out = beta( data, 0.2, {
 	'copy': false
 });
-// returns [ -1, -0.8427, 0, 0.8427, 1 ]
+// returns [ ~3.382, ~2.920, ~2.685, ~2.532, ~2.419, ~2.331 ]
 
 bool = ( data === out );
 // returns true
 
 data = new Float64Array( 6 );
 for ( i = 0; i < 6; i++ ) {
-	data[ i ] = i / 2;
+	data[ i ] = i * 5 + 5;
 }
 mat = matrix( data, [3,2], 'float64' );
 /*
-	[ 0  0.5
-	  1  1.5
-	  2  2.5 ]
+	[ 5   10
+	  15  20
+	  25  30 ]
 */
 
 out = beta( mat, {
 	'copy': false
 });
 /*
-	[  0    ~0.52
-	  ~0.84 ~0.97
-	  ~1    ~1    ]
+	[ ~3.382 ~2.920
+	  ~2.685 ~2.532
+	  ~2.419 ~2.331 ]
 */
 
 bool = ( mat === out );
@@ -252,16 +240,16 @@ bool = ( mat === out );
 	``` javascript
 	var data, out;
 
-	out = beta( null );
+	out = beta( null, 1 );
 	// returns NaN
 
-	out = beta( true );
+	out = beta( true, 1 );
 	// returns NaN
 
-	out = beta( {'a':'b'} );
+	out = beta( {'a':'b'}, 1 );
 	// returns NaN
 
-	out = beta( [ true, null, [] ] );
+	out = beta( [ true, null, [] ], 1 );
 	// returns [ NaN, NaN, NaN ]
 
 	function getValue( d, i ) {
@@ -274,12 +262,12 @@ bool = ( mat === out );
 		{'x':null}
 	];
 
-	out = beta( data, {
+	out = beta( data, 1, {
 		'accessor': getValue
 	});
 	// returns [ NaN, NaN, NaN, NaN ]
 
-	out = beta( data, {
+	out = beta( data, 1, {
 		'path': 'x'
 	});
 	/*
@@ -295,7 +283,7 @@ bool = ( mat === out );
 *	Be careful when providing a data structure which contains non-numeric elements and specifying an `integer` output data type, as `NaN` values are cast to `0`.
 
 	``` javascript
-	var out = beta( [ true, null, [] ], {
+	var out = beta( [ true, null, [] ], 1, {
 		'dtype': 'int8'
 	});
 	// returns Int8Array( [0,0,0] );
@@ -305,23 +293,23 @@ bool = ( mat === out );
 
 	``` javascript
 		// Valid:
-		var out = beta( 2.1, [ 0, 1, 2 ], {
+		var out = beta( 2, [ 1, 2, 3 ], {
 			'dtype': 'int8'
 		});
-		// returns Int8Array( [1,2,4] )
+		// returns Int8Array( [0,0,0] )
 
 		// Not valid:
-		var out = beta( 0.5, [ 0, 1, 2 ], {
+		var out = beta( 2, [ 1, 2, 3 ], {
 			'copy': false
 		});
 		// throws an error
 	```
-	
+
 ## Examples
 
 ``` javascript
 var matrix = require( 'dstructs-matrix' ),
-	beta = require( 'compute-beta' );
+	 beta = require( 'compute-beta' );
 
 var data,
 	mat,
@@ -329,12 +317,13 @@ var data,
 	tmp,
 	i;
 
+// ----
 // Plain arrays...
 data = new Array( 10 );
 for ( i = 0; i < data.length; i++ ) {
-	data[ i ] = Math.random()*20 - 10;
+	data[ i ] = Math.random();
 }
-out = beta( data );
+out = beta( data, 0.5 );
 
 // Object arrays (accessors)...
 function getValue( d ) {
@@ -345,7 +334,7 @@ for ( i = 0; i < data.length; i++ ) {
 		'x': data[ i ]
 	};
 }
-out = beta( data, {
+out = beta( data, 0.5, {
 	'accessor': getValue
 });
 
@@ -355,17 +344,17 @@ for ( i = 0; i < data.length; i++ ) {
 		'x': [ i, data[ i ].x ]
 	};
 }
-out = beta( data, {
+out = beta( data, 0.5, {
 	'path': 'x/1',
 	'sep': '/'
 });
 
 // Typed arrays...
-data = new Int32Array( 10 );
+data = new Float32Array( 10 );
 for ( i = 0; i < data.length; i++ ) {
-	data[ i ] = Math.random() * 100;
+	data[ i ] = Math.random();
 }
-tmp = beta( data );
+tmp = beta( data, 0.5 );
 out = '';
 for ( i = 0; i < data.length; i++ ) {
 	out += tmp[ i ];
@@ -375,12 +364,11 @@ for ( i = 0; i < data.length; i++ ) {
 }
 
 // Matrices...
-mat = matrix( data, [5,2], 'int32' );
-out = beta( mat );
-
+mat = matrix( data, [5,2], 'float32' );
+out = beta( mat, 0.5 );
 
 // Matrices (custom output data type)...
-out = beta( mat, {
+out = beta( mat, 0.5, {
 	'dtype': 'uint8'
 });
 ```
