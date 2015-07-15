@@ -9,6 +9,9 @@ var // Expectation library:
 	// Deep close to:
 	deepCloseTo = require( './utils/deepcloseto.js' ),
 
+	// Matrix data structure:
+	matrix = require( 'dstructs-matrix' ),
+
 	// Module to be tested:
 	beta = require( './../lib/array.js' );
 
@@ -31,32 +34,46 @@ describe( 'array beta', function tests() {
 			var data, actual, expected;
 
 			data = [
+				0.1,
+				0.2,
+				0.5,
+				0.8,
 				1,
 				2,
 				3,
 				4,
-				5
+				5,
+				10,
+				20,
+				100
 			];
 			actual = new Array( data.length );
 
-			actual = beta( actual, data, 2 );
+			actual = beta( actual, data, 0.5 );
 
 			expected = [
-				1,
-				4,
-				9,
-				16,
-				25
+				11.32308697521575,
+				6.268653124086035,
+				3.141592653589794,
+				2.299287818447969,
+				2,
+				1.333333333333333,
+				1.066666666666667,
+				0.9142857142857143,
+				0.8126984126984126,
+				0.567546385503043,
+				0.3988173068948813,
+				0.1774670794283158
 			];
 
 			assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 			// Typed arrays...
-			data = new Int32Array( data );
-			actual = new Int32Array( data.length );
+			data = new Float32Array( data );
+			actual = new Float32Array( data.length );
 
-			actual = beta( actual, data, 2 );
-			expected = new Int32Array( expected );
+			actual = beta( actual, data, 0.5 );
+			expected = new Float32Array( expected );
 
 			assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 		});
@@ -65,7 +82,6 @@ describe( 'array beta', function tests() {
 			var data, actual, expected, y;
 
 			data = [
-				0,
 				1,
 				2,
 				3,
@@ -73,7 +89,6 @@ describe( 'array beta', function tests() {
 			];
 
 		 	y = [
-				0,
 				1,
 				2,
 				3,
@@ -84,17 +99,20 @@ describe( 'array beta', function tests() {
 			actual = beta( actual, data, y );
 
 			expected = [
-
+				1,
+				0.1666666666666667,
+				0.03333333333333333,
+				0.007142857142857144
 			];
 
 			assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 			// Typed arrays...
-			data = new Int32Array( data );
-			actual = new Int32Array( data.length );
+			data = new Float32Array( data );
+			actual = new Float32Array( data.length );
 
 			actual = beta( actual, data, y );
-			expected = new Int32Array( expected );
+			expected = new Float32Array( expected );
 
 			assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 		});
@@ -135,7 +153,7 @@ describe( 'array beta', function tests() {
 			y = new Int32Array( [1,2,3] );
 			actual = new Array( data.length );
 			actual = beta( actual, data, y );
-			expected = [ 1, NaN, 27 ];
+			expected = [ 1, NaN, 0.03333333333333333 ];
 
 			assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
@@ -152,5 +170,14 @@ describe( 'array beta', function tests() {
 			}
 		});
 
+		it( 'should throw an error if provided a matrix as y argument', function test() {
+			expect( foo ).to.throw( Error );
+			function foo() {
+				beta( [], [1,2,3,4], matrix( new Int32Array( [1,2,3,4] ), [2,2] ), getValue );
+			}
+			function getValue( d ) {
+				return d;
+			}
+		});
 
 });

@@ -36,6 +36,15 @@ describe( 'compute-beta', function tests() {
 		expect( beta ).to.be.a( 'function' );
 	});
 
+	it( 'should throw an error if provided only one argument', function test() {
+
+		expect( badValue ).to.throw( Error );
+
+		function badValue() {
+				beta( [1,2,3] );
+		}
+	});
+
 	it( 'should throw an error if provided an invalid option', function test() {
 		var values = [
 			'5',
@@ -53,7 +62,7 @@ describe( 'compute-beta', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				beta( [1,2,3], {
+				beta( [1,2,3], 2, {
 					'accessor': value
 				});
 			};
@@ -71,7 +80,7 @@ describe( 'compute-beta', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				beta( [1,2,3], , 1,  {
+				beta( [1,2,3], 1,  {
 					'dtype': value
 				});
 			};
@@ -89,7 +98,7 @@ describe( 'compute-beta', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				beta( new Int8Array([1,2,3]), , 1,  {
+				beta( new Int8Array([1,2,3]), 1,  {
 					'dtype': value
 				});
 			};
@@ -107,7 +116,7 @@ describe( 'compute-beta', function tests() {
 		}
 		function badValue( value ) {
 			return function() {
-				beta( matrix( [2,2] ), , 1,  {
+				beta( matrix( [2,2] ), 1,  {
 					'dtype': value
 				});
 			};
@@ -126,7 +135,7 @@ describe( 'compute-beta', function tests() {
 		];
 
 		for ( var i = 0; i < values.length; i++ ) {
-			assert.isTrue( isnan( beta( values[ i ], 1,  ) ) );
+			assert.isTrue( isnan( beta( values[ i ], 1 ) ) );
 		}
 	});
 
@@ -166,35 +175,46 @@ describe( 'compute-beta', function tests() {
 	});
 
 	it( 'should evaluate the  beta function for two numbers', function test() {
-		assert.strictEqual( beta( 2, 4 ), 16 );
-		assert.strictEqual( beta( 3, 3 ), 27 );
+		assert.closeTo( beta( 2, 4 ), 0.05, 1e-7 );
+		assert.closeTo( beta( 1, 1 ), 1, 1e-7 );
 	});
 
 	it( 'should evaluate the  beta function for a scalar and an array', function test() {
 		var data, actual, expected;
-		data = [ 1, 2 ];
-		actual = beta( 2, data );
-		expected = [ 2, 4 ];
+		data = [ 1, 5 ];
+		actual = beta( 3, data );
+		expected = [
+			0.333333333333333315,
+			0.009523809523809525
+		];
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 	});
 
 	it( 'should evaluate the  beta function for a scalar and a matrix', function test() {
-		var data, actual, expected;
+		var data, actual, expected, i;
 		data = matrix( new Int8Array( [ 1,2,3,4 ] ), [2,2] );
 		actual = beta( 2, data );
-		expected = matrix( new Float64Array( [2,4,8,16] ), [2,2] );
+		expected = matrix( new Float64Array([
+			0.5,
+			0.16666666666666666,
+			0.08333333333333333,
+			0.05000000000000000
+		]), [2,2] );
 
-		assert.deepEqual( actual.data, expected.data );
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( actual.data[ i ], expected.data[ i ], 1e-7 );
+		}
+
 	});
 
 
 	it( 'should evaluate the beta function for a scalar and an array and cast result to a different dtype', function test() {
 		var data, actual, expected;
-		data = [ 1, 2 ];
-		actual = beta( 10, data, {
+		data = [ 1, 10 ];
+		actual = beta( 0.1, data, {
 			'dtype':'int32'
 		});
-		expected = new Int32Array( [10,100] );
+		expected = new Int32Array( [9,7] );
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 	});
 
@@ -202,62 +222,90 @@ describe( 'compute-beta', function tests() {
 	it( 'should evaluate the beta function for a scalar and a matrix and cast to a different dtype', function test() {
 		var data, actual, expected;
 		data = matrix( new Int8Array( [ 1,2,3,4 ] ), [2,2] );
-		actual = beta( 2, data, {
+		actual = beta( 0.4, data, {
 			'dtype': 'int32'
 		});
-		expected = matrix( new Int32Array( [2,4,8,16] ), [2,2] );
+		expected = matrix( new Int32Array( [2,1,1,1] ), [2,2] );
 
 		assert.strictEqual( actual.dtype, 'int32' );
-		assert.deepEqual( actual.data, expected.data );
+
+		assert.isTrue( deepCloseTo( actual.data, expected.data, 1e-7 ) );
 	});
 
 	it( 'should evaluate the beta function for a matrix and a scalar and cast to a different dtype', function test() {
 		var data, actual, expected;
 		data = matrix( new Int8Array( [1,2,3,4] ), [2,2] );
-		actual = beta( data, 2, {
+		actual = beta( data, 0.4, {
 			'dtype': 'int32'
 		});
-		expected = matrix( new Int32Array( [2,4,8,16] ), [2,2] );
+		expected = matrix( new Int32Array( [2,1,1,1] ), [2,2] );
 
 		assert.strictEqual( actual.dtype, 'int32' );
-		assert.deepEqual( actual.data, expected.data );
+
+		assert.isTrue( deepCloseTo( actual.data, expected.data, 1e-7 ) );
 	});
 
 	it( 'should evaluate the beta function for a plain array and a scalar', function test() {
 		var data, actual, expected;
 
-		data = [ 0, 1, 2, 3 ];
-		expected = [
-			0,
+		data = [
+			0.1,
+			0.2,
+			0.5,
+			0.8,
 			1,
-			8,
-			27
+			2,
+			3,
+			4,
+			5,
+			10,
+			20,
+			100
+		];
+		expected = [
+			11.32308697521575,
+			6.268653124086035,
+			3.141592653589794,
+			2.299287818447969,
+			2,
+			1.333333333333333,
+			1.066666666666667,
+			0.9142857142857143,
+			0.8126984126984126,
+			0.567546385503043,
+			0.3988173068948813,
+			0.1774670794283158
 		];
 
-		actual = beta( data, 3 );
+		actual = beta( data, 0.5 );
 		assert.notEqual( actual, data );
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 		// Mutate...
-		actual = beta( data, 3, {
+		actual = beta( data, 0.5, {
 			'copy': false
 		});
 		assert.strictEqual( actual, data );
 
-		assert.deepEqual( data, expected );
+		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 	});
 
 	it( 'should evaluate the beta function for a plain array and another array', function test() {
 		var data, actual, expected;
 
-		data = [ 0, 1, 2, 3 ];
+		data = [
+			1,
+			2,
+			3,
+			4
+		];
 		expected = [
 			1,
-			1,
-			4,
-			27
+			0.1666666666666667,
+			0.03333333333333333,
+			0.007142857142857144
 		];
 
 		actual = beta( data, data );
@@ -271,71 +319,85 @@ describe( 'compute-beta', function tests() {
 		});
 		assert.strictEqual( actual, data );
 
-		assert.deepEqual( data, expected );
+		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 	});
 
 	it( 'should evaluate the beta function for a typed array and a scalar', function test() {
-		var data, actual, expected;
+		var data, actual, expected, i;
 
-		data = new Int8Array( [ 0, 1, 2, 3 ] );
+		data = new Int8Array( [ 3, 6, 9, 12 ] );
 
 		expected = new Float64Array( [
-			0,
-			1,
-			8,
-			27
+			0.03333333333333333,
+			0.005952380952380952,
+			0.00202020202020202,
+			0.0009157509157509158
 		]);
 
 		actual = beta( data, 3 );
 		assert.notEqual( actual, data );
 
-		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( actual[ i ], expected[ i ], 1e-7 );
+		}
 
 		// Mutate:
 		actual = beta( data, 3, {
 			'copy': false
 		});
 		assert.strictEqual( actual, data );
-		expected = new Int8Array( [ 0, 1, 8, 27 ] );
+		expected = new Int8Array( [ 0, 0, 0, 0 ] );
 
-		assert.deepEqual( data, expected );
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( data[ i ], expected[ i ], 1e-7 );
+		}
+
 	});
 
 	it( 'should evaluate the beta function for a typed array and another typed array', function test() {
-		var data, actual, expected;
+		var data, actual, expected, i;
 
-		data = new Int8Array( [ 0, 1, 2, 3 ] );
+		data = new Float32Array( [ 1, 2, 3, 4 ] );
 
 		expected = new Float64Array( [
 			1,
-			1,
-			4,
-			27
+			0.1666666666666667,
+			0.03333333333333333,
+			0.007142857142857144
 		]);
 
 		actual = beta( data, data );
 		assert.notEqual( actual, data );
-		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( actual[ i ], expected[ i ], 1e-14 );
+		}
 
 		// Mutate:
 
 		actual = beta( data, data, {
 			'copy': false
 		});
-		expected = new Int8Array( [ 1, 1, 4, 27 ] );
+		expected = new Float32Array([
+			1,
+			0.1666666666666667,
+			0.03333333333333333,
+			0.007142857142857144
+		]);
 		assert.strictEqual( actual, data );
 
-		assert.deepEqual( data, expected );
+		for ( i = 0; i < actual.length; i++ ) {
+			assert.closeTo( data[ i ], expected[ i ], 1e-14 );
+		}
 	});
 
 	it( 'should evaluate the beta function for a typed array and a scalar and return an array of a specific type', function test() {
 		var data, actual, expected;
 
-		data = [ 0, 1, 2, 3 ];
-		expected = new Int8Array( [ 0, 1, 16, 81 ] );
+		data = [ 1, 2, 3, 4 ];
+		expected = new Int8Array( [ 4, 4, 3, 3 ] );
 
-		actual = beta( data, 4, {
+		actual = beta( data, 0.2, {
 			'dtype': 'int8'
 		});
 		assert.notEqual( actual, data );
@@ -347,20 +409,20 @@ describe( 'compute-beta', function tests() {
 		var data, actual, expected;
 
 		data = [
-			[3,0],
-			[4,1],
-			[5,2],
-			[6,3]
+			[3,10],
+			[4,20],
+			[5,30],
+			[6,40]
 		];
 
 		expected = [
-			1,
-			1,
-			1,
-			1
+			0.009090909090909092,
+			0.002380952380952381,
+			0.001075268817204301,
+			0.0006097560975609757
 		];
 
-		actual = beta( data, 0, {
+		actual = beta( data, 2, {
 			'accessor': getValue
 		});
 		assert.notEqual( actual, data );
@@ -368,13 +430,13 @@ describe( 'compute-beta', function tests() {
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 		// Mutate:
-		actual = beta( data, 0, {
+		actual = beta( data, 2, {
 			'accessor': getValue,
 			'copy': false
 		});
 		assert.strictEqual( actual, data );
 
-		assert.deepEqual( data, expected );
+		assert.isTrue( deepCloseTo( data, expected, 1e-7 ) );
 
 		function getValue( d ) {
 			return d[ 1 ];
@@ -385,17 +447,17 @@ describe( 'compute-beta', function tests() {
 		var data, actual, expected, y;
 
 		data = [
-			{'x':0},
-			{'x':1},
-			{'x':2},
-			{'x':3}
+			{'x':10},
+			{'x':20},
+			{'x':30},
+			{'x':40}
 		];
 
 		y = [
-			{'y':0},
-			{'y':1},
-			{'y':2},
-			{'y':3}
+			{'y':10},
+			{'y':20},
+			{'y':30},
+			{'y':40}
 		];
 
 		actual = beta( data, y, {
@@ -403,10 +465,10 @@ describe( 'compute-beta', function tests() {
 		});
 
 		expected = [
-			1,
-			1,
-			4,
-			27
+			1.082508822446903e-06,
+			7.254444551924845e-13,
+			5.637077964048311e-19,
+			4.650850914009383e-25
 		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
@@ -425,19 +487,19 @@ describe( 'compute-beta', function tests() {
 		var data, actual, expected;
 
 		data = [
-			{'x':[3,0]},
-			{'x':[4,1]},
-			{'x':[5,2]},
-			{'x':[6,3]}
+			{'x':[9,1]},
+			{'x':[9,2]},
+			{'x':[9,3]},
+			{'x':[9,4]}
 		];
 		expected = [
-			{'x':[3,0]},
-			{'x':[4,1]},
-			{'x':[5,8]},
-			{'x':[6,27]}
+			{'x':[9,2]},
+			{'x':[9,1.333333333333333]},
+			{'x':[9,1.066666666666667]},
+			{'x':[9,0.9142857142857143]}
 		];
 
-		actual = beta( data, 3, {
+		actual = beta( data, 0.5, {
 			'path': 'x.1'
 		});
 
@@ -447,12 +509,12 @@ describe( 'compute-beta', function tests() {
 
 		// Specify a path with a custom separator...
 		data = [
-			{'x':[3,0]},
-			{'x':[4,1]},
-			{'x':[5,2]},
-			{'x':[6,3]}
+			{'x':[9,1]},
+			{'x':[9,2]},
+			{'x':[9,3]},
+			{'x':[9,4]}
 		];
-		actual = beta( data, 3, {
+		actual = beta( data, 0.5, {
 			'path': 'x/1',
 			'sep': '/'
 		});
@@ -465,13 +527,13 @@ describe( 'compute-beta', function tests() {
 		var data, actual, expected, y;
 
 		data = [
-			{'x':0},
 			{'x':1},
 			{'x':2},
-			{'x':3}
+			{'x':3},
+			{'x':4}
 		];
 
-		y = [ 0, 1, 2, 3 ];
+		y = [ 1, 2, 3, 4 ];
 
 		actual = beta( data, y, {
 			path: 'x'
@@ -479,20 +541,20 @@ describe( 'compute-beta', function tests() {
 
 		expected = [
 			{'x':1},
-			{'x':1},
-			{'x':4},
-			{'x':27}
+			{'x':0.1666666666666667},
+			{'x':0.03333333333333333},
+			{'x':0.007142857142857144}
 		];
 
 		assert.strictEqual( data, actual );
-		assert.deepEqual( data, expected);
+		assert.isTrue( deepCloseTo( data, expected, 1e-7 ) );
 
 		// Custom separator...
 		data = [
-			{'x':[9,0]},
 			{'x':[9,1]},
 			{'x':[9,2]},
-			{'x':[9,3]}
+			{'x':[9,3]},
+			{'x':[9,4]}
 		];
 
 		data = beta( data, y, {
@@ -501,12 +563,12 @@ describe( 'compute-beta', function tests() {
 		});
 		expected = [
 			{'x':[9,1]},
-			{'x':[9,1]},
-			{'x':[9,4]},
-			{'x':[9,27]}
+			{'x':[9,0.1666666666666667]},
+			{'x':[9,0.03333333333333333]},
+			{'x':[9,0.007142857142857144]}
 		];
 
-		assert.deepEqual( data, expected, 'custom separator' );
+		assert.isTrue( deepCloseTo( data, expected, 1e-7 ), 'custom separator' );
 	});
 
 	it( 'should evaluate the beta function for a matrix and a scalar', function test() {
@@ -522,11 +584,10 @@ describe( 'compute-beta', function tests() {
 		d3 = new Int32Array( 100 );
 		for ( i = 0; i < d1.length; i++ ) {
 			d1[ i ] = i;
-			d2[ i ] = Math.beta( i, i );
-			d3[ i ] = Math.beta( i, 2 );
+			d2[ i ] = BETA( i, i );
+			d3[ i ] = BETA( i, 2 );
 		}
 
-		// Raise matrix elements to a scalar power
 		mat = matrix( d1, [10,10], 'int32' );
 		out = beta( mat, 2, {
 			'dtype': 'int32'
@@ -560,7 +621,7 @@ describe( 'compute-beta', function tests() {
 		d2 = new Uint16Array( 100 );
 		for ( i = 0; i < d1.length; i++ ) {
 			d1[ i ] = i;
-			d2[ i ] = Math.beta( i, 2 );
+			d2[ i ] = BETA( i, 2 );
 		}
 		mat = matrix( d1, [10,10], 'int16' );
 		out = beta( mat, 2, {

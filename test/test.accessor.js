@@ -9,6 +9,9 @@ var // Expectation library:
 	// Deep close to:
 	deepCloseTo = require( './utils/deepcloseto.js' ),
 
+	// Matrix data structure:
+	matrix = require( 'dstructs-matrix' ),
+
 	// Module to be tested:
 	beta = require( './../lib/accessor.js' );
 
@@ -31,16 +34,19 @@ describe( 'accessor beta', function tests() {
 		var data, actual, expected;
 
 		data = [
-			{'x':0},
-			{'x':1},
-			{'x':2},
-			{'x':3}
+			{'x':10},
+			{'x':20},
+			{'x':30},
+			{'x':40}
 		];
 		actual = new Array( data.length );
 		actual = beta( actual, data, 2, getValue );
 
 		expected = [
-
+			0.009090909090909092,
+			0.002380952380952381,
+			0.001075268817204301,
+			0.0006097560975609757
 		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
@@ -55,24 +61,27 @@ describe( 'accessor beta', function tests() {
 		var data, actual, expected, y;
 
 		data = [
-			{'x':0},
-			{'x':1},
-			{'x':2},
-			{'x':3}
+			{'x':10},
+			{'x':20},
+			{'x':30},
+			{'x':40}
 		];
 
 		y = [
-			0,
-			1,
-			2,
-			3
+			10,
+			20,
+			30,
+			40
 		];
 
 		actual = new Array( data.length );
 		actual = beta( actual, data, y, getValue );
 
 		expected = [
-
+			1.082508822446903e-06,
+			7.254444551924845e-13,
+			5.637077964048311e-19,
+			4.650850914009383e-25
 		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
@@ -87,24 +96,27 @@ describe( 'accessor beta', function tests() {
 		var data, actual, expected, y;
 
 		data = [
-			{'x':0},
-			{'x':1},
-			{'x':2},
-			{'x':3}
+			{'x':10},
+			{'x':20},
+			{'x':30},
+			{'x':40}
 		];
 
 		y = [
-			{'y':0},
-			{'y':1},
-			{'y':2},
-			{'y':3}
+			{'y':10},
+			{'y':20},
+			{'y':30},
+			{'y':40}
 		];
 
 		actual = new Array( data.length );
 		actual = beta( actual, data, y, getValue );
 
 		expected = [
-
+			1.082508822446903e-06,
+			7.254444551924845e-13,
+			5.637077964048311e-19,
+			4.650850914009383e-25
 		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
@@ -138,7 +150,7 @@ describe( 'accessor beta', function tests() {
 		actual = new Array( data.length );
 		actual = beta( actual, data, 1, getValue );
 
-		expected = [ 1, NaN, 3 ];
+		expected = [ 1, NaN, 0.3333333333333333 ];
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
 		// single non-numeric value
@@ -153,7 +165,7 @@ describe( 'accessor beta', function tests() {
 		y = [ 1, 2, 3 ];
 		actual = new Array( data.length );
 		actual = beta( actual, data, y, getValue );
-		expected = [ 1, NaN, 27 ];
+		expected = [ 1, NaN, 0.03333333333333333 ];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
@@ -165,7 +177,7 @@ describe( 'accessor beta', function tests() {
 		y = new Int32Array( [1,2,3] );
 		actual = new Array( data.length );
 		actual = beta( actual, data, y, getValue );
-		expected = [ 1, NaN, 27 ];
+		expected = [ 1, NaN, 0.03333333333333333 ];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
@@ -177,7 +189,7 @@ describe( 'accessor beta', function tests() {
 		];
 		actual = new Array( data.length );
 		actual = beta( actual, data, y, getValue2 );
-		expected = [ 1, NaN, 27 ];
+		expected = [ 1, NaN, 0.03333333333333333 ];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
@@ -211,5 +223,14 @@ describe( 'accessor beta', function tests() {
 		}
 	});
 
+	it( 'should throw an error if provided a matrix as y argument', function test() {
+		expect( foo ).to.throw( Error );
+		function foo() {
+			beta( [], [1,2,3,4], matrix( new Int32Array( [1,2,3,4] ), [2,2] ), getValue );
+		}
+		function getValue( d ) {
+			return d;
+		}
+	});
 
 });
