@@ -19,7 +19,7 @@ var // Expectation library:
 	beta = require( './../lib' ),
 
 	// Function to apply element-wise:
-	BETA = require( './../lib/number.js' );
+	BETA = require( './../lib/number-number.js' );
 
 
 // VARIABLES //
