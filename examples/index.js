@@ -1,7 +1,7 @@
 'use strict';
 
 var matrix = require( 'dstructs-matrix' ),
-	 beta = require( './../lib' );
+	beta = require( './../lib' );
 
 var data,
 	mat,
@@ -21,8 +21,11 @@ console.log( 'Arrays: %s\n', out );
 
 // ----
 // Object arrays (accessors)...
-function getValue( d ) {
-	return d.x;
+function getValue( d, i, j ) {
+	if ( j === 0 ) {
+		return d.x;
+	}
+	return d;
 }
 for ( i = 0; i < data.length; i++ ) {
 	data[ i ] = {
@@ -33,22 +36,6 @@ out = beta( data, 0.5, {
 	'accessor': getValue
 });
 console.log( 'Accessors: %s\n', out );
-
-
-// ----
-// Deep set arrays...
-for ( i = 0; i < data.length; i++ ) {
-	data[ i ] = {
-		'x': [ i, data[ i ].x ]
-	};
-}
-out = beta( data, 0.5, {
-	'path': 'x/1',
-	'sep': '/'
-});
-console.log( 'Deepset:' );
-console.dir( out );
-console.log( '\n' );
 
 
 // ----
