@@ -13,7 +13,7 @@ var // Expectation library:
 	deepCloseTo = require( './utils/deepcloseto.js' ),
 
 	// Module to be tested:
-	beta = require( './../lib/matrix-number.js' ),
+	beta = require( './../lib/number-matrix.js' ),
 
 	// Function to apply element-wise:
 	BETA = require( './../lib/number-number.js' );
@@ -27,7 +27,7 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'matrix-number beta', function tests() {
+describe( 'number-matrix beta', function tests() {
 
 	var out,
 		mat,
@@ -39,7 +39,7 @@ describe( 'matrix-number beta', function tests() {
 	d2 = new Float64Array( 25 );
 	for ( i = 0; i < d1.length; i++ ) {
 		d1[ i ] = i;
-		d2[ i ] = BETA( i, 2 );
+		d2[ i ] = BETA( 2, i );
 	}
 
 	beforeEach( function before() {
@@ -54,7 +54,7 @@ describe( 'matrix-number beta', function tests() {
 	it( 'should throw an error if provided an incompatible output matrix', function test() {
 		expect( badValues ).to.throw( Error );
 		function badValues() {
-			beta( matrix( [10,10] ), mat, 2 );
+			beta( matrix( [10,10] ), 2, mat );
 		}
 	});
 
@@ -62,7 +62,7 @@ describe( 'matrix-number beta', function tests() {
 		var actual;
 
 		actual = matrix( [5,5], 'float64' );
-		actual = beta( actual, mat, 2 );
+		actual = beta( actual, 2, mat );
 
 		assert.isTrue( deepCloseTo( actual.data, out.data, 1e-7 ) );
 	});
@@ -74,13 +74,13 @@ describe( 'matrix-number beta', function tests() {
 		expected = matrix( [0,0] ).data;
 
 		mat = matrix( [0,10] );
-		assert.deepEqual( beta( out, mat, 2 ).data, expected );
+		assert.deepEqual( beta( out, 2, mat ).data, expected );
 
 		mat = matrix( [10,0] );
-		assert.deepEqual( beta( out, mat, 2 ).data, expected );
+		assert.deepEqual( beta( out, 2, mat ).data, expected );
 
 		mat = matrix( [0,0] );
-		assert.deepEqual( beta( out, mat, 2 ).data, expected );
+		assert.deepEqual( beta( out, 2, mat ).data, expected );
 	});
 
 });
