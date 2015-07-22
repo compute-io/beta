@@ -13,10 +13,10 @@ var // Expectation library:
 	deepCloseTo = require( './utils/deepcloseto.js' ),
 
 	// Module to be tested:
-	beta = require( './../lib/matrix-matrix.js' ),
+	beta = require( './../lib/matrix.js' ),
 
 	// Function to apply element-wise:
-	BETA = require( './../lib/number-number.js' );
+	BETA = require( './../lib/number.js' );
 
 
 // VARIABLES //
@@ -27,7 +27,7 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'matrix-matrix beta', function tests() {
+describe( 'matrix-number beta', function tests() {
 
 	var out,
 		mat,
@@ -39,7 +39,7 @@ describe( 'matrix-matrix beta', function tests() {
 	d2 = new Float64Array( 25 );
 	for ( i = 0; i < d1.length; i++ ) {
 		d1[ i ] = i;
-		d2[ i ] = BETA( i, i );
+		d2[ i ] = BETA( i, 2 );
 	}
 
 	beforeEach( function before() {
@@ -54,14 +54,7 @@ describe( 'matrix-matrix beta', function tests() {
 	it( 'should throw an error if provided an incompatible output matrix', function test() {
 		expect( badValues ).to.throw( Error );
 		function badValues() {
-			beta( matrix( [10,10] ), mat, mat );
-		}
-	});
-
-	it( 'should throw an error if provided incompatible input matrices', function test() {
-		expect( badValues ).to.throw( Error );
-		function badValues() {
-			beta( matrix( [5,5] ), mat, matrix( [10,10] ) );
+			beta( matrix( [10,10] ), mat, 2 );
 		}
 	});
 
@@ -69,7 +62,7 @@ describe( 'matrix-matrix beta', function tests() {
 		var actual;
 
 		actual = matrix( [5,5], 'float64' );
-		actual = beta( actual, mat, mat );
+		actual = beta( actual, mat, 2 );
 
 		assert.isTrue( deepCloseTo( actual.data, out.data, 1e-7 ) );
 	});
@@ -81,14 +74,13 @@ describe( 'matrix-matrix beta', function tests() {
 		expected = matrix( [0,0] ).data;
 
 		mat = matrix( [0,10] );
-		assert.deepEqual( beta( out, mat, mat ).data, expected );
+		assert.deepEqual( beta( out, mat, 2 ).data, expected );
 
 		mat = matrix( [10,0] );
-		assert.deepEqual( beta( out, mat, mat ).data, expected );
+		assert.deepEqual( beta( out, mat, 2 ).data, expected );
 
 		mat = matrix( [0,0] );
-		assert.deepEqual( beta( out, mat, mat ).data, expected );
+		assert.deepEqual( beta( out, mat, 2 ).data, expected );
 	});
-
 
 });
