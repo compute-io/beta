@@ -10,7 +10,7 @@ var // Expectation library:
 	deepCloseTo = require( './utils/deepcloseto.js' ),
 
 	// Module to be tested:
-	beta = require( './../lib/array-typedarray.js' );
+	beta = require( './../lib/typedarray-array.js' );
 
 
 // VARIABLES //
@@ -21,7 +21,7 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'array-typedarray beta', function tests() {
+describe( 'typedarray-array beta', function tests() {
 
 	it( 'should export a function', function test() {
 		expect( beta ).to.be.a( 'function' );
@@ -30,7 +30,7 @@ describe( 'array-typedarray beta', function tests() {
 	it( 'should throw an error if provided arrays of unequal length', function test() {
 		expect( foo ).to.throw( Error );
 		function foo() {
-			beta( [1,2], [1,2], new Int32Array( 3 ) );
+			beta( [1,2,3], new Int32Array( 3 ), [1,2] );
 		}
 	});
 
@@ -39,8 +39,8 @@ describe( 'array-typedarray beta', function tests() {
 			actual,
 			x, y;
 
-		x = [ 1, 2, 3, 4 ];
-		y = new Int8Array( [ 1, 2, 3, 4 ] );
+		x = new Int8Array( [ 1, 2, 3, 4 ] );
+		y = [ 1, 2, 3, 4 ];
 
 		actual = new Array( x.length );
 		actual = beta( actual, x, y );
@@ -56,7 +56,7 @@ describe( 'array-typedarray beta', function tests() {
 	});
 
 	it( 'should return an empty array if provided an empty array', function test() {
-		assert.deepEqual( beta( [], [], new Int8Array() ), [] );
+		assert.deepEqual( beta( [], new Int8Array(), [] ), [] );
 	});
 
 	it( 'should handle non-numeric values by setting the element to NaN', function test() {
@@ -64,8 +64,8 @@ describe( 'array-typedarray beta', function tests() {
 			actual,
 			x, y;
 
-		x = [ true, null, [], {} ];
-		y = new Int8Array( [ 1, 2, 3, 4 ] );
+		x = new Int8Array( [ 1, 2, 3, 4 ] );
+		y = [ true, null, [], {} ];
 
 		actual = new Array( x.length );
 		actual = beta( actual, x, y );
