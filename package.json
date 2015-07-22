@@ -1,7 +1,7 @@
 {
   "name": "compute-beta",
   "version": "0.0.0",
-  "description": "Evaluates the beta function.",
+  "description": "Beta function.",
   "author": {
     "name": "Philipp Burckhardt",
     "email": "pburckhardt@outlook.com"
@@ -42,6 +42,7 @@
     "dstructs",
     "array",
     "arrays",
+    "typed array",
     "accessor",
     "element-wise"
   ],

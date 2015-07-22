@@ -30,21 +30,23 @@ describe( 'accessor beta', function tests() {
 	it( 'should throw an error if not provided arrays of equal length', function test() {
 		expect( foo ).to.throw( Error );
 		function foo() {
-			beta( [], [1,2], [1,2,3] );
+			beta( [1,2], [1,2], [1,2,3] );
 		}
 	});
 
 	it( 'should evaluate the beta function using an accessor when `y` is a scalar', function test() {
-		var data, actual, expected;
+		var expected,
+			actual,
+			x;
 
-		data = [
+		x = [
 			{'x':10},
 			{'x':20},
 			{'x':30},
 			{'x':40}
 		];
-		actual = new Array( data.length );
-		actual = beta( actual, data, 2, getValue );
+		actual = new Array( x.length );
+		actual = beta( actual, x, 2, getValue );
 
 		expected = [
 			0.009090909090909092,
@@ -64,16 +66,18 @@ describe( 'accessor beta', function tests() {
 	});
 
 	it( 'should evaluate the beta function using an accessor when `x` is a scalar', function test() {
-		var data, actual, expected;
+		var expected,
+			actual,
+			y;
 
-		data = [
+		y = [
 			{'y':10},
 			{'y':20},
 			{'y':30},
 			{'y':40}
 		];
-		actual = new Array( data.length );
-		actual = beta( actual, 2, data, getValue );
+		actual = new Array( y.length );
+		actual = beta( actual, 2, y, getValue );
 
 		expected = [
 			0.009090909090909092,
@@ -92,10 +96,12 @@ describe( 'accessor beta', function tests() {
 		}
 	});
 
-	it( 'should evaluate the beta function using an accessor when `y` is an array', function test() {
-		var data, actual, expected, y;
+	it( 'should evaluate the beta function using an accessor for mixed arrays', function test() {
+		var expected,
+			actual,
+			x, y;
 
-		data = [
+		x = [
 			{'x':10},
 			{'x':20},
 			{'x':30},
@@ -109,8 +115,8 @@ describe( 'accessor beta', function tests() {
 			40
 		];
 
-		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue );
+		actual = new Array( x.length );
+		actual = beta( actual, x, y, getValue );
 
 		expected = [
 			1.082508822446903e-06,
@@ -130,9 +136,11 @@ describe( 'accessor beta', function tests() {
 	});
 
 	it( 'should evaluate the beta function for two object arrays using an accessor', function test() {
-		var data, actual, expected, y;
+		var expected,
+			actual,
+			x, y;
 
-		data = [
+		x = [
 			{'x':10},
 			{'x':20},
 			{'x':30},
@@ -146,8 +154,8 @@ describe( 'accessor beta', function tests() {
 			{'y':40}
 		];
 
-		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue );
+		actual = new Array( x.length );
+		actual = beta( actual, x, y, getValue );
 
 		expected = [
 			1.082508822446903e-06,
@@ -175,17 +183,19 @@ describe( 'accessor beta', function tests() {
 		}
 	});
 
-	it( 'should handle non-numeric values by setting the elements to NaN', function test() {
-		var data, actual, expected, y;
+	it( 'should handle non-numeric values by setting the element to NaN', function test() {
+		var expected,
+			actual,
+			x, y;
 
 		// Array-scalar:
-		data = [
+		x = [
 			{'x':1},
 			{'x':null},
 			{'x':3}
 		];
-		actual = new Array( data.length );
-		actual = beta( actual, data, 1, getValue1 );
+		actual = new Array( x.length );
+		actual = beta( actual, x, 1, getValue1 );
 
 		expected = [
 			1,
@@ -197,8 +207,8 @@ describe( 'accessor beta', function tests() {
 		// Array-value:
 		y = false;
 
-		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue1 );
+		actual = new Array( x.length );
+		actual = beta( actual, x, y, getValue1 );
 
 		expected = [
 			NaN,
@@ -211,8 +221,8 @@ describe( 'accessor beta', function tests() {
 		// Array-array:
 		y = [ 1, 2, 3 ];
 
-		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue1 );
+		actual = new Array( x.length );
+		actual = beta( actual, x, y, getValue1 );
 
 		expected = [
 			1,
@@ -225,8 +235,8 @@ describe( 'accessor beta', function tests() {
 		// Array-typed array:
 		y = new Int32Array( [1,2,3] );
 
-		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue1 );
+		actual = new Array( x.length );
+		actual = beta( actual, x, y, getValue1 );
 
 		expected = [
 			1,
@@ -242,8 +252,8 @@ describe( 'accessor beta', function tests() {
 			{'y':2},
 			{'y':3}
 		];
-		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue2 );
+		actual = new Array( x.length );
+		actual = beta( actual, x, y, getValue2 );
 
 		expected = [
 			1,
