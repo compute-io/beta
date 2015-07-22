@@ -27,71 +27,51 @@ var expect = chai.expect,
 
 // TESTS //
 
-describe( 'matrix beta', function tests() {
+describe( 'matrix-matrix beta', function tests() {
 
-	var out1, out2,
+	var out,
 		mat,
 		d1,
 		d2,
-		d3,
 		i;
 
 	d1 = new Float64Array( 25 );
 	d2 = new Float64Array( 25 );
-	d3 = new Float64Array( 25 );
 	for ( i = 0; i < d1.length; i++ ) {
 		d1[ i ] = i;
 		d2[ i ] = BETA( i, i );
-		d3[ i ] = BETA( i, 2 );
 	}
 
 	beforeEach( function before() {
 		mat = matrix( d1, [5,5], 'float64' );
-		out1 = matrix( d2, [5,5], 'float64' );
-		out2 = matrix( d3, [5,5], 'float64' );
+		out = matrix( d2, [5,5], 'float64' );
 	});
 
 	it( 'should export a function', function test() {
 		expect( beta ).to.be.a( 'function' );
 	});
 
-	it( 'should throw an error if provided unequal length matrices', function test() {
+	it( 'should throw an error if provided an incompatible output matrix', function test() {
 		expect( badValues ).to.throw( Error );
 		function badValues() {
-			beta( matrix( [10,10] ), mat, 1 );
+			beta( matrix( [10,10] ), mat, mat );
 		}
 	});
 
-	it( 'should throw an error if provided a y matrix which is not of equal dimensionality as the x matrix', function test() {
+	it( 'should throw an error if provided incompatible input matrices', function test() {
 		expect( badValues ).to.throw( Error );
 		function badValues() {
 			beta( matrix( [5,5] ), mat, matrix( [10,10] ) );
 		}
 	});
 
-	it( 'should throw an error if provided an array as the y argument', function test() {
-		expect( foo ).to.throw( Error );
-		function foo() {
-			beta( matrix( [5,5] ), mat, [1,2,3,4,5] );
-		}
-	});
-
-	it( 'should evaluate the beta function for a matrix and a scalar', function test() {
-		var actual;
-
-		actual = matrix( [5,5], 'float64' );
-		actual = beta( actual, mat, 2 );
-
-		assert.isTrue( deepCloseTo( actual.data, out2.data, 1e-7 ) );
-	});
-
-	it( 'should evaluate the beta function for a matrix and a matrix', function test() {
+	it( 'should evaluate the beta function', function test() {
 		var actual;
 
 		actual = matrix( [5,5], 'float64' );
 		actual = beta( actual, mat, mat );
 
-		assert.isTrue( deepCloseTo( actual.data, out1.data, 1e-7 ) );
+		assert.isTrue( deepCloseTo( actual.data, out.data, 1e-7 ) );
 	});
 
 	it( 'should return an empty matrix if provided an empty matrix', function test() {
@@ -101,13 +81,13 @@ describe( 'matrix beta', function tests() {
 		expected = matrix( [0,0] ).data;
 
 		mat = matrix( [0,10] );
-		assert.deepEqual( beta( out, mat, 1 ).data, expected );
+		assert.deepEqual( beta( out, mat, mat ).data, expected );
 
 		mat = matrix( [10,0] );
-		assert.deepEqual( beta( out, mat, 1 ).data, expected );
+		assert.deepEqual( beta( out, mat, mat ).data, expected );
 
 		mat = matrix( [0,0] );
-		assert.deepEqual( beta( out, mat, 1 ).data, expected );
+		assert.deepEqual( beta( out, mat, mat ).data, expected );
 	});
 
 
