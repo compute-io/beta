@@ -9,9 +9,6 @@ var // Expectation library:
 	// Deep close to:
 	deepCloseTo = require( './utils/deepcloseto.js' ),
 
-	// Matrix data structure:
-	matrix = require( 'dstructs-matrix' ),
-
 	// Module to be tested:
 	beta = require( './../lib/accessor.js' );
 
@@ -30,7 +27,14 @@ describe( 'accessor beta', function tests() {
 		expect( beta ).to.be.a( 'function' );
 	});
 
-	it( 'should evaluate the beta function using an accessor when y is a scalar', function test() {
+	it( 'should throw an error if not provided arrays of equal length', function test() {
+		expect( foo ).to.throw( Error );
+		function foo() {
+			beta( [], [1,2], [1,2,3] );
+		}
+	});
+
+	it( 'should evaluate the beta function using an accessor when `y` is a scalar', function test() {
 		var data, actual, expected;
 
 		data = [
@@ -51,13 +55,44 @@ describe( 'accessor beta', function tests() {
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
-		function getValue( d ) {
+		function getValue( d, i, j ) {
+			if ( j === 1 ) {
+				return d;
+			}
 			return d.x;
 		}
-
 	});
 
-	it( 'should evaluate the beta function using an accessor when y is an array', function test() {
+	it( 'should evaluate the beta function using an accessor when `x` is a scalar', function test() {
+		var data, actual, expected;
+
+		data = [
+			{'y':10},
+			{'y':20},
+			{'y':30},
+			{'y':40}
+		];
+		actual = new Array( data.length );
+		actual = beta( actual, 2, data, getValue );
+
+		expected = [
+			0.009090909090909092,
+			0.002380952380952381,
+			0.001075268817204301,
+			0.0006097560975609757
+		];
+
+		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
+
+		function getValue( d, i, j ) {
+			if ( j === 0 ) {
+				return d;
+			}
+			return d.y;
+		}
+	});
+
+	it( 'should evaluate the beta function using an accessor when `y` is an array', function test() {
 		var data, actual, expected, y;
 
 		data = [
@@ -86,10 +121,12 @@ describe( 'accessor beta', function tests() {
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
-		function getValue( d, i ) {
-			return d.x;
+		function getValue( d, i, j ) {
+			if ( j === 0 ) {
+				return d.x;
+			}
+			return d;
 		}
-
 	});
 
 	it( 'should evaluate the beta function for two object arrays using an accessor', function test() {
@@ -138,50 +175,68 @@ describe( 'accessor beta', function tests() {
 		}
 	});
 
-	it( 'should handle non-numeric values by setting the element to NaN', function test() {
+	it( 'should handle non-numeric values by setting the elements to NaN', function test() {
 		var data, actual, expected, y;
 
-		// numeric value
+		// Array-scalar:
 		data = [
 			{'x':1},
 			{'x':null},
 			{'x':3}
 		];
 		actual = new Array( data.length );
-		actual = beta( actual, data, 1, getValue );
+		actual = beta( actual, data, 1, getValue1 );
 
-		expected = [ 1, NaN, 0.3333333333333333 ];
+		expected = [
+			1,
+			NaN,
+			0.3333333333333333
+		];
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
-		// single non-numeric value
+		// Array-value:
 		y = false;
+
 		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue );
-		expected = [ NaN, NaN, NaN ];
+		actual = beta( actual, data, y, getValue1 );
+
+		expected = [
+			NaN,
+			NaN,
+			NaN
+		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
-		// numeric array
+		// Array-array:
 		y = [ 1, 2, 3 ];
+
 		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue );
-		expected = [ 1, NaN, 0.03333333333333333 ];
+		actual = beta( actual, data, y, getValue1 );
+
+		expected = [
+			1,
+			NaN,
+			0.03333333333333333
+		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
-		function getValue( d, i ) {
-			return d.x;
-		}
-
-		// typed array
+		// Array-typed array:
 		y = new Int32Array( [1,2,3] );
+
 		actual = new Array( data.length );
-		actual = beta( actual, data, y, getValue );
-		expected = [ 1, NaN, 0.03333333333333333 ];
+		actual = beta( actual, data, y, getValue1 );
+
+		expected = [
+			1,
+			NaN,
+			0.03333333333333333
+		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
-		// object array
+		// Object arrays:
 		y = [
 			{'y':1},
 			{'y':2},
@@ -189,47 +244,27 @@ describe( 'accessor beta', function tests() {
 		];
 		actual = new Array( data.length );
 		actual = beta( actual, data, y, getValue2 );
-		expected = [ 1, NaN, 0.03333333333333333 ];
+
+		expected = [
+			1,
+			NaN,
+			0.03333333333333333
+		];
 
 		assert.isTrue( deepCloseTo( actual, expected, 1e-7 ) );
 
+		function getValue1( d, i, j ) {
+			if ( j === 1 ) {
+				return d;
+			}
+			return d.x;
+		}
 		function getValue2( d, i, j ) {
 			if ( j === 0 ) {
 				return d.x;
 			} else {
 				return d.y;
 			}
-		}
-
-	});
-
-	it( 'should throw an error if provided a y array which is not of equal length to the x array', function test() {
-		expect( foo ).to.throw( Error );
-		function foo() {
-			beta( [], [1,2], [1,2,3], getValue );
-		}
-		function getValue( d ) {
-			return d;
-		}
-	});
-
-	it( 'should throw an error if provided a typed array as y which is not of equal length to the x array', function test() {
-		expect( foo ).to.throw( Error );
-		function foo() {
-			beta( [], [1,2], new Int32Array( [1,2,3] ), getValue );
-		}
-		function getValue( d ) {
-			return d;
-		}
-	});
-
-	it( 'should throw an error if provided a matrix as y argument', function test() {
-		expect( foo ).to.throw( Error );
-		function foo() {
-			beta( [], [1,2,3,4], matrix( new Int32Array( [1,2,3,4] ), [2,2] ), getValue );
-		}
-		function getValue( d ) {
-			return d;
 		}
 	});
 
