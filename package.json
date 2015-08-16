@@ -52,8 +52,9 @@
   "dependencies": {
     "compute-array-constructors": "^1.0.0",
     "compute-array-function": "git://github.com/compute-io/array-function.git",
-    "compute-matrix-function": "^1.0.1",
-    "compute-typed-array-function": "^1.0.0",
+    "compute-matrix-function": "^1.0.2",
+    "compute-matrix-number-function": "git://github.com/compute-io/matrix-number-function.git",
+    "compute-typed-array-function": "^1.0.2",
     "dstructs-matrix": "^2.0.0",
     "gamma": "^1.0.0",
     "validate.io-array-like": "^1.0.1",

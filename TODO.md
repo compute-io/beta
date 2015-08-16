@@ -9,4 +9,6 @@ TODO
 5. R scripts and test runner
 	-	see Philipp's work.
 6. tests for return a data structure of NaN values
-7. 
+7. remove `nans.js`
+	-	replace with `compute-nans`
+8. 
